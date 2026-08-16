@@ -25,7 +25,7 @@ const { url: PROXY_URL, apiKey: API_KEY } = getProxyConfig();
 
 async function callProxy(query) {
   const payload = {
-    model: 'gemini-3-flash',
+    model: 'gemini-3.1-flash-lite',
     system: 'You are a concise search assistant. Return ONLY factual results in 2-3 sentences with source URLs. No code, no filler.',
     messages: [{ role: 'user', content: query }],
     max_tokens: 512,
