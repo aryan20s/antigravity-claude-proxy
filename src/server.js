@@ -21,6 +21,7 @@ import { clearThinkingSignatureCache } from './format/signature-cache.js';
 import { formatDuration } from './utils/helpers.js';
 import { logger } from './utils/logger.js';
 import usageStats from './modules/usage-stats.js';
+import { attachMCPServer } from './mcp-server.js';
 
 // Parse fallback flag directly from command line args to avoid circular dependency
 const args = process.argv.slice(2);
@@ -37,6 +38,10 @@ for (let i = 0; i < args.length; i++) {
 }
 
 const app = express();
+
+// Attach MCP SSE server endpoints
+const mcpPort = process.env.PORT || 8080;
+attachMCPServer(app, mcpPort);
 
 // Disable x-powered-by header for security
 app.disable('x-powered-by');
@@ -734,8 +739,8 @@ app.post('/v1/messages', async (req, res) => {
 
         const modelId = requestedModel;
 
-        // Add support for web-search virtual model
-        if (modelId === 'web-search') {
+        // Add support for web-search virtual model and +search suffix
+        if (modelId === 'web-search' || modelId.endsWith('+search')) {
             // Valid virtual model
         } else {
             // Validate model ID before processing
@@ -750,6 +755,19 @@ app.post('/v1/messages', async (req, res) => {
                 }
             }
         }
+
+        // Log the request to a file for debugging
+        const fs = await import('fs');
+        fs.appendFileSync('proxy_debug.log', JSON.stringify({
+            timestamp: new Date().toISOString(),
+            model: modelId,
+            messages: messages.map(m => ({
+                role: m.role,
+                contentLength: JSON.stringify(m.content).length,
+                contentPreview: JSON.stringify(m.content).substring(0, 100)
+            })),
+            tools: tools ? tools.map(t => t.name) : []
+        }) + '\n');
 
         // Optimistic Retry: If ALL accounts are rate-limited for this model, reset them to force a fresh check.
         // If we have some available accounts, we try them first.
