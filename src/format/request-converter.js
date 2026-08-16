@@ -204,9 +204,9 @@ export function convertAnthropicToGoogle(anthropicRequest) {
     if (tools && tools.length > 0) {
         // Separate Google Search grounding tools from regular function declarations.
         // Clients signal grounding by including a tool named "google_search" or
-        // "googleSearchRetrieval" (or Claude Code's "WebSearch") in the Anthropic tools array.
-        // These are converted to native Gemini grounding entries instead of functionDeclarations.
-        const GROUNDING_TOOL_NAMES = new Set(['google_search', 'googleSearchRetrieval', 'WebSearch']);
+        // "googleSearchRetrieval" in the Anthropic tools array. These are converted
+        // to native Gemini grounding entries instead of functionDeclarations.
+        const GROUNDING_TOOL_NAMES = new Set(['google_search', 'googleSearchRetrieval']);
         const regularTools = [];
         const groundingEntries = [];
 
