@@ -39,12 +39,16 @@ for (let i = 0; i < args.length; i++) {
 
 const app = express();
 
+// Disable x-powered-by header for security
+app.disable('x-powered-by');
+
+// Middleware
+app.use(cors());
+app.use(express.json({ limit: REQUEST_BODY_LIMIT }));
+
 // Attach MCP SSE server endpoints
 const mcpPort = process.env.PORT || 8080;
 attachMCPServer(app, mcpPort);
-
-// Disable x-powered-by header for security
-app.disable('x-powered-by');
 
 // Initialize account manager (will be fully initialized on first request or startup)
 export const accountManager = new AccountManager();
@@ -79,10 +83,6 @@ async function ensureInitialized() {
 
     return initPromise;
 }
-
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: REQUEST_BODY_LIMIT }));
 
 // API Key authentication middleware for /v1/* endpoints
 app.use('/v1', (req, res, next) => {
