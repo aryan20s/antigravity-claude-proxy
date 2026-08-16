@@ -11,14 +11,14 @@ function getProxyConfig() {
     if (fs.existsSync(configPath)) {
       const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
       const env = config.env || {};
-      const baseUrl = env.ANTHROPIC_BASE_URL || config.apiBaseUrl || 'http://localhost:8080';
+      const baseUrl = env.ANTHROPIC_BASE_URL || config.apiBaseUrl || 'http://localhost:49542';
       const apiKey = env.ANTHROPIC_AUTH_TOKEN || config.apiKey || 'test';
       return { url: `${baseUrl}/v1/messages`, apiKey };
     }
   } catch (e) {
     // Ignore error
   }
-  return { url: 'http://localhost:8080/v1/messages', apiKey: 'test' };
+  return { url: 'http://localhost:49542/v1/messages', apiKey: 'test' };
 }
 
 const { url: PROXY_URL, apiKey: API_KEY } = getProxyConfig();
