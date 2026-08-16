@@ -46,27 +46,35 @@ export function buildCloudCodeRequest(anthropicRequest, projectId, accountEmail)
         }
     }
 
-    // Handle web-search model
+    // Handle web-search model suffix
     let targetModel = model;
-    if (model === 'web-search') {
-        targetModel = 'gemini-2.5-flash';
 
-        // Add googleSearch tool if not present
+    if (targetModel === 'web-search') {
+        targetModel = 'gemini-2.5-flash';
+    }
+
+    const hasSearchSuffix = targetModel.endsWith('+search');
+    if (hasSearchSuffix) {
+        targetModel = targetModel.slice(0, -7);
+    }
+
+    if (model === 'web-search' || hasSearchSuffix) {
+        // Add google_search tool if not present
         if (!googleRequest.tools) {
-            googleRequest.tools = [{ googleSearch: {} }];
+            googleRequest.tools = [{ google_search: {} }];
         } else {
-            // Check if googleSearch already exists somewhere in tools
-            const hasGoogleSearch = googleRequest.tools.some(t => t.googleSearch);
+            // Check if google_search already exists somewhere in tools
+            const hasGoogleSearch = googleRequest.tools.some(t => t.google_search || t.googleSearch);
             if (!hasGoogleSearch) {
                 // Prepend to tools array
-                googleRequest.tools.unshift({ googleSearch: {} });
+                googleRequest.tools.unshift({ google_search: {} });
             }
         }
     }
 
     const payload = {
         project: projectId,
-        model: model,
+        model: targetModel,
         request: googleRequest,
         userAgent: 'antigravity',
         requestType: 'agent',  // CLIProxyAPI v6.6.89 compatibility
