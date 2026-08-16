@@ -69,7 +69,15 @@ node tests/test-strategies.cjs
 
 An MCP server that provides Google Search grounding via Gemini through the proxy.
 
-**Setup:** Add to your Claude Code global `~/.claude/settings.json` (under `mcpServers`):
+**Setup:** 
+
+You can add the MCP server directly using the `claude mcp add` command:
+```bash
+claude mcp add antigravity-search http://localhost:8080/mcp/sse -t sse
+```
+*(Note: Replace `8080` with your custom port if you set `ANTHROPIC_BASE_URL` to something else.)*
+
+Alternatively, you can manually add it to your Claude Code global `~/.claude/settings.json` (under `mcpServers`):
 
 ```json
 {
@@ -81,8 +89,6 @@ An MCP server that provides Google Search grounding via Gemini through the proxy
   }
 }
 ```
-
-*Note: Replace `8080` with your custom port if you set `ANTHROPIC_BASE_URL` to something else.*
 
 **How it works:** Sends queries to `gemini-3-flash` through the proxy with a `google_search` tool that activates Google Search grounding, plus a minimal thinking budget (`budget_tokens: 1`) for fast responses. Returns live search results, not training data.
 
