@@ -25,10 +25,77 @@ npm run accounts:add -- --no-browser # headless/manual code input
 npm run accounts:list
 npm run accounts:verify
 
-npm test                             # requires server running on port 8080
-node tests/run-all.cjs <filter>      # run matching tests only
-node tests/test-strategies.cjs       # strategy unit tests (no server needed)
+# Start with developer mode (debug logging + dev tools)
+npm start -- --dev-mode
+
+# Start with debug logging (legacy alias, also enables dev mode)
+npm start -- --debug
+
+# Development mode (file watching)
+npm run dev              # Watch server files only
+npm run dev:full         # Watch both CSS and server files (recommended for frontend dev)
+
+# CSS build commands
+npm run build:css        # Build CSS once (minified)
+npm run watch:css        # Watch CSS files for changes
+
+# Account management
+npm run accounts         # Interactive account management
+npm run accounts:add     # Add a new Google account via OAuth
+npm run accounts:add -- --no-browser  # Add account on headless server (manual code input)
+npm run accounts:list    # List configured accounts
+npm run accounts:verify  # Verify account tokens are valid
+
+# Run all tests (server must be running on port 8080)
+npm test
+
+# Run individual tests
+npm run test:signatures    # Thinking signatures
+npm run test:multiturn     # Multi-turn with tools
+npm run test:streaming     # Streaming SSE events
+npm run test:interleaved   # Interleaved thinking
+npm run test:images        # Image processing
+npm run test:caching       # Prompt caching
+npm run test:crossmodel    # Cross-model thinking signatures
+npm run test:oauth         # OAuth no-browser mode
+npm run test:cache-control # Cache control field stripping
+npm run test:websearch     # Web search MCP (Google Search grounding)
+
+# Run strategy unit tests (no server required)
+node tests/test-strategies.cjs
 ```
+
+## Web Search MCP Server
+
+An MCP server that provides Google Search grounding via Gemini through the proxy.
+
+**Setup:** Add to your Claude Code project config (`~/.claude.json` under `projects.<path>.mcpServers`):
+
+```json
+{
+  "mcpServers": {
+    "antigravity-search": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["./scripts/web_search_mcp.py"]
+    }
+  }
+}
+```
+
+**Dependencies:** Install Python dependencies before first use:
+
+```bash
+pip install -r scripts/requirements.txt
+```
+
+**How it works:** Sends queries to `gemini-3-flash` through the proxy with a `google_search` tool that activates Google Search grounding, plus a minimal thinking budget (`budget_tokens: 1`) for fast responses. Returns live search results, not training data.
+
+**Google Search Grounding (Proxy-level):**
+- Any Anthropic-format request can enable grounding by including a tool named `google_search` or `googleSearchRetrieval`
+- The proxy converts these to native Gemini `{ google_search: {} }` entries, separate from `functionDeclarations`
+- Grounding cannot be mixed with function declarations in the same request (Cloud Code API limitation)
+- Grounding is only supported on Gemini models
 
 ## Non-obvious things
 
