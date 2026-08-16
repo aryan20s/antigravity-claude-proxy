@@ -76,14 +76,14 @@ An MCP server that provides Google Search grounding via Gemini through the proxy
   "mcpServers": {
     "antigravity-search": {
       "type": "stdio",
-      "command": "acc.cmd",
-      "args": ["mcp"]
+      "command": "cmd.exe",
+      "args": ["/c", "acc", "mcp"]
     }
   }
 }
 ```
 
-*Note: Use `acc.cmd` on Windows and `acc` on macOS/Linux.*
+*Note: Use `"command": "cmd.exe", "args": ["/c", "acc", "mcp"]` on Windows, and `"command": "acc", "args": ["mcp"]` on macOS/Linux.*
 
 **How it works:** Sends queries to `gemini-3-flash` through the proxy with a `google_search` tool that activates Google Search grounding, plus a minimal thinking budget (`budget_tokens: 1`) for fast responses. Returns live search results, not training data.
 
