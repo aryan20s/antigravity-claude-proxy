@@ -274,18 +274,6 @@ export function convertAnthropicToGoogle(anthropicRequest) {
                 }
             };
         }
-
-        // When combining custom tools with built-in tools (like Google Search) on Gemini,
-        // we must enable include_server_side_tool_invocations or Google API rejects the request
-        if (isGeminiModel && regularTools.length > 0 && groundingEntries.length > 0) {
-            if (!googleRequest.toolConfig) googleRequest.toolConfig = {};
-            if (!googleRequest.toolConfig.functionCallingConfig) googleRequest.toolConfig.functionCallingConfig = {};
-            // Note: Cloud Code API requires this when mixing functionDeclarations and google_search
-            // However, the error message uses snake_case, but the Node.js SDK / API usually expects camelCase
-            // We'll set both to be safe against different Cloud Code endpoint parser versions
-            googleRequest.toolConfig.functionCallingConfig.includeServerSideToolInvocations = true;
-            googleRequest.toolConfig.functionCallingConfig.include_server_side_tool_invocations = true;
-        }
     }
 
     // Cap max tokens for Gemini models
