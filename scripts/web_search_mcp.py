@@ -2,8 +2,11 @@ import sys
 import json
 import asyncio
 import traceback
-
 import os
+import requests
+
+from mcp.server import Server
+import mcp.types as types
 
 def get_proxy_config():
     config_path = os.path.join(os.path.expanduser("~"), ".claude", "settings.json")
@@ -26,8 +29,9 @@ def get_proxy_config():
     try:
         with open(config_path) as f:
             config = json.load(f)
-            base_url = config.get("apiBaseUrl", "http://localhost:8080")
-            api_key = config.get("apiKey", "test")
+            env = config.get("env", {})
+            base_url = env.get("ANTHROPIC_BASE_URL", config.get("apiBaseUrl", "http://localhost:8080"))
+            api_key = env.get("ANTHROPIC_AUTH_TOKEN", config.get("apiKey", "test"))
             return f"{base_url}/v1/messages", api_key
     except Exception:
         return "http://localhost:8080/v1/messages", "test"
@@ -167,7 +171,7 @@ def handle_request(request):
                         }]
                     }
                 }
-            result = search(query)
+            result = _call_proxy(query)
             return {
                 "jsonrpc": "2.0",
                 "id": req_id,
@@ -245,4 +249,4 @@ def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
