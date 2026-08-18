@@ -63,7 +63,7 @@ def _call_proxy(query: str) -> str:
     """Send a search query through the Antigravity Proxy using Google Search grounding."""
     headers = {"x-api-key": API_KEY, "Content-Type": "application/json"}
     payload = {
-        "model": "gemini-3-flash",
+        "model": "gemini-3.1-flash-lite",
         "system": "You are a concise search assistant. Return ONLY factual results in 2-3 sentences with source URLs. No code, no filler.",
         "messages": [{"role": "user", "content": query}],
         "max_tokens": 512,
