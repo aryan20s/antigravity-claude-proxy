@@ -69,19 +69,28 @@ node tests/test-strategies.cjs
 
 An MCP server that provides Google Search grounding via Gemini through the proxy.
 
-**Setup:** Add to your Claude Code project config (`~/.claude.json` under `projects.<path>.mcpServers`):
+**Setup:** 
+
+You can add the MCP server directly to your project using the `claude mcp add` command:
+```bash
+claude mcp add antigravity-search python -a scripts/web_search_mcp.py
+```
+
+Or you can manually add it to your global `~/.claude/settings.json` (under `mcpServers`):
 
 ```json
 {
   "mcpServers": {
     "antigravity-search": {
       "type": "stdio",
-      "command": "python3",
-      "args": ["./scripts/web_search_mcp.py"]
+      "command": "python",
+      "args": ["/absolute/path/to/scripts/web_search_mcp.py"]
     }
   }
 }
 ```
+
+*Note: You must use the absolute path to the Python script in your global settings.*
 
 **Dependencies:** Install Python dependencies before first use:
 
