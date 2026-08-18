@@ -378,6 +378,7 @@ USAGE
   restart            Relaunch the proxy
   status             View proxy health and details
   ui                 Open dashboard in browser
+  mcp                Run the proxy's Web Search MCP Server
 
 ━━━ ACCOUNT MANAGEMENT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   accounts           Interactive account menu
@@ -454,6 +455,10 @@ async function main() {
 
     case 'ui':
       await openUI();
+      break;
+
+    case 'mcp':
+      await import('../src/cli/mcp.js');
       break;
 
     case 'accounts': {
